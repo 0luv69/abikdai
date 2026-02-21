@@ -3,7 +3,7 @@ import ApiError from "../Utils/ApiError.js"
 import ApiResponse from "../Utils/ApiResponse.js"
 import User from "../Schemas/UserSchema.js"
 import Joi from "joi"
-import { hashPassword,verifyPassword,CreateAccessToken,CreateRefreshToken } from "../Utils/Authutils.js"
+import { hashPassword, verifyPassword, CreateAccessToken, CreateRefreshToken } from "../Utils/Authutils.js"
 
 const registerScheama = Joi.object({
   email: Joi.string().email().required(),
@@ -11,9 +11,9 @@ const registerScheama = Joi.object({
   password: Joi.string().min(6).required()
 });
 
-const loginSchema=Joi.object({
-    email:Joi.string().email().required(),
-    password:Joi.string().min(6).required()
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required()
 })
 
 const RegisterUser = asyncHandler(async (req, res) => {
@@ -49,7 +49,6 @@ const RegisterUser = asyncHandler(async (req, res) => {
   );
 });
 
-
 const LoginUser = asyncHandler(async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
   if (error) {
@@ -57,7 +56,7 @@ const LoginUser = asyncHandler(async (req, res) => {
   }
   const email = value.email.toLowerCase();
 
-  const existingUser = await User.findOne({ email }).select("fullname _id email password");
+  const existingUser = await User.findOne({ email }).select("fullname _id email password role");
   if (!existingUser) {
     throw new ApiError(400, "Invalid credentials");
   }
@@ -66,19 +65,19 @@ const LoginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid credentials");
   }
 
-  const newAccessToken = CreateAccessToken(existingUser._id, existingUser.email, existingUser.fullname);
-  const newRefreshToken = CreateRefreshToken(existingUser._id, existingUser.email, existingUser.fullname);
+  const newAccessToken = CreateAccessToken(existingUser._id, existingUser.email, existingUser.fullname, existingUser.role);
+  const newRefreshToken = CreateRefreshToken(existingUser._id, existingUser.email, existingUser.fullname, existingUser.role);
 
   res.cookie("accessToken", newAccessToken, {
     httpOnly: true,
-    secure: false, 
+    secure: false,
     maxAge: 10 * 60 * 1000,
     path: "/",
   });
 
   res.cookie("refreshToken", newRefreshToken, {
     httpOnly: true,
-    secure: false, 
+    secure: false,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/",
   });
@@ -87,26 +86,27 @@ const LoginUser = asyncHandler(async (req, res) => {
     new ApiResponse(200, "User logged in successfully", {
       id: existingUser._id,
       fullname: existingUser.fullname,
-      email: existingUser.email
+      email: existingUser.email,
+      role: existingUser.role || "user",
     })
   );
 });
 
 
-const LogoutUser=asyncHandler(async(req,res)=>{
-    res.clearCookie("accessToken",{
+const LogoutUser = asyncHandler(async (req, res) => {
+  res.clearCookie("accessToken", {
     httpOnly: true,
     secure: false,
     path: "/",
-    })
-    res.clearCookie("refreshToken",{
+  })
+  res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: false,
     path: "/",
-    })
-    res.send(new ApiResponse(200,'User logged out succesfully'))
+  })
+  res.send(new ApiResponse(200, 'User logged out succesfully'))
 })
 
 export {
-    RegisterUser,LoginUser,LogoutUser
+  RegisterUser, LoginUser, LogoutUser
 }

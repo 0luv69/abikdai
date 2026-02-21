@@ -1,187 +1,277 @@
-import { ArrowRight, Terminal, Zap, LayoutTemplate, Github } from "lucide-react";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
+import {
+  Leaf,
+  Recycle,
+  MapPin,
+  Calendar,
+  Truck,
+  CheckCircle,
+  ArrowRight,
+  Clock,
+  Shield,
+  ChevronRight,
+} from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
-const Pill = ({ label }) => (
-  <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-mono text-muted-foreground 
-  shadow-sm shadow-black/5 backdrop-blur">
-    {label}
-  </span>
-);
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
+  }),
+};
 
-const FeatureCard = ({
-  icon: Icon,
-  title,
-  text,
-}) => (
-  <div className="space-y-1 rounded-xl border bg-card/70 p-3 shadow-sm shadow-black/5">
-    <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/80">
-      <Icon className="h-3.5 w-3.5" />
-      <span>{title}</span>
-    </div>
-    <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
-  </div>
-);
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+function AnimatedSection({ children, className = "" }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      variants={staggerContainer}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+const features = [
+  { icon: Calendar, title: "Easy Scheduling", text: "Schedule garbage pickup with just a few clicks." },
+  { icon: MapPin, title: "Smart Location", text: "Set your exact pickup location on an interactive map." },
+  { icon: Truck, title: "Live Tracking", text: "Track your pickup status in real-time." },
+  { icon: Clock, title: "Route Optimization", text: "Optimized collection routes save time and fuel." },
+  { icon: Recycle, title: "Waste Segregation", text: "Categorize waste types for proper disposal." },
+  { icon: Leaf, title: "Eco Impact", text: "Track your contribution to a cleaner environment." },
+];
+
+const steps = [
+  { num: 1, title: "Sign Up", text: "Create your free account in seconds." },
+  { num: 2, title: "Schedule Pickup", text: "Choose waste type, date, and location." },
+  { num: 3, title: "We Collect", text: "Our team picks up your waste on time." },
+  { num: 4, title: "Track & Repeat", text: "Monitor status and schedule again." },
+];
+
+const wasteCategories = [
+  { name: "Organic", color: "#4CAF50", icon: Leaf },
+  { name: "Plastic", color: "#2196F3", icon: Recycle },
+  { name: "Paper", color: "#D2B48C", icon: CheckCircle },
+  { name: "Metal", color: "#78909C", icon: Shield },
+  { name: "E-Waste", color: "#7B1FA2", icon: Clock },
+  { name: "Glass", color: "#009688", icon: ChevronRight },
+];
+
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-background/60 text-foreground">
-      {/* soft glows */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-24 right-[-7rem] h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute bottom-[-5rem] left-[-6rem] h-56 w-56 rounded-full bg-emerald-500/25 blur-3xl" />
-      </div>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
 
-      {/* NAVBAR */}
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6 md:py-8">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border bg-background/80 shadow-sm shadow-black/5 backdrop-blur">
-            <span className="bg-gradient-to-tr from-primary to-primary/70 bg-clip-text text-xl font-semibold text-transparent">
-              SF
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold tracking-tight md:text-base">
-              StackForge
-            </span>
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground/80 md:text-[12px]">
-              stack-installer-cli
-            </span>
-          </div>
+      <section className="relative isolate px-6 pt-20 pb-24 md:pt-32 md:pb-36">
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 h-[520px] w-[720px] rounded-full bg-primary/15 blur-[120px]" />
         </div>
 
-        <nav className="hidden items-center gap-4 text-xs font-medium text-muted-foreground md:flex">
-          <button className="rounded-full border border-transparent px-4 py-1.5 transition hover:border-border hover:bg-muted/60">
-            Docs (soon)
-          </button>
-          <button className="inline-flex items-center gap-1.5 rounded-full border bg-foreground text-background px-4 py-1.5
-           font-semibold shadow-sm shadow-black/10 transition hover:bg-foreground/90" onClick={(e)=>{
-        window.open("https://github.com/RajanDhamala/stackforge-cli", "_blank");
-           }}>
-            <Github className="h-3.5 w-3.5" />
-            <span >Star the CLI</span>
-          </button>
-        </nav>
-      </header>
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="pointer-events-none absolute text-primary/10"
+            style={{
+              top: `${10 + i * 18}%`,
+              left: `${5 + i * 20}%`,
+            }}
+            animate={{ y: [0, -18, 0], rotate: [0, 8, -8, 0] }}
+            transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Leaf className="h-10 w-10 md:h-14 md:w-14" />
+          </motion.div>
+        ))}
 
-      {/* MAIN */}
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 pb-16 pt-2 md:flex-row md:items-center md:gap-12 md:pb-24">
-        {/* LEFT */}
-        <section className="flex-1 space-y-7">
-          <div className="inline-flex items-center gap-2 rounded-full border bg-card/80 px-3 py-1 text-[11px]
-           font-medium text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
-            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/10 text-[9px] text-emerald-500">
-              ●
-            </span>
-            <span className="hidden sm:inline">New</span>
-            <span className="text-foreground/80">React / TS / Express stack in one shot</span>
-          </div>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="mx-auto max-w-3xl text-center space-y-6"
+        >
+          <motion.h1
+            variants={fadeUp}
+            custom={0}
+            className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight"
+          >
+            Smart Waste Management for a{" "}
+            <span className="text-primary">Cleaner Tomorrow</span>
+          </motion.h1>
 
-          <div className="space-y-3">
-            <h1 className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-4xl font-semibold leading-tight
-             tracking-tight text-transparent sm:text-5xl md:text-5xl">
-              Your own full‑stack boilerplate,
-              <br className="hidden sm:block" /> shipped from the CLI.
-            </h1>
-            <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
-              <strong>stack-installer-cli</strong> by StackForge spins up React + TypeScript on the
-              front, and Express, Mongoose, and Prisma on the back. Opinionated,
-              batteries‑included, and styled like a modern React starter — without
-              the noise.
+          <motion.p
+            variants={fadeUp}
+            custom={1}
+            className="mx-auto max-w-xl text-muted-foreground text-base sm:text-lg"
+          >
+            Schedule pickups, track waste collection in real-time, and help
+            optimize routes — all from one simple platform.
+          </motion.p>
+
+          <motion.div
+            variants={fadeUp}
+            custom={2}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Button asChild size="lg" className="gap-2">
+              <Link to="/schedule">
+                Schedule a Pickup <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <a href="#features">
+                Learn More <ChevronRight className="h-4 w-4" />
+              </a>
+            </Button>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      <section id="features" className="px-6 py-20 md:py-28">
+        <AnimatedSection className="mx-auto max-w-5xl space-y-12">
+          <motion.div variants={fadeUp} className="text-center space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Everything You Need
+            </h2>
+            <p className="mx-auto max-w-lg text-muted-foreground">
+              Powerful features designed to make waste management effortless.
             </p>
-          </div>
+          </motion.div>
 
-          {/* CTA + command */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button className="group inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5
-             text-sm font-semibold text-background shadow-[0_18px_45px_-18px_rgba(0,0,0,0.7)] transition hover:-translate-y-[1px] hover:bg-foreground/95"
-              onClick={(e)=>{
-                  window.open("https://www.npmjs.com/package/stack-installer-cli", "_blank");
-             }}>
-              <Zap className="h-4 w-4" />
-              Init my stack
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-            </button>
+          <motion.div
+            variants={staggerContainer}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {features.map((f, i) => (
+              <motion.div key={f.title} variants={fadeUp} custom={i}>
+                <Card className="p-6 space-y-4 hover:shadow-lg transition-shadow h-full">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <f.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {f.text}
+                  </p>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatedSection>
+      </section>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Pill label="npx stack-installer-cli" />
-            </div>
-          </div>
+      <section className="px-6 py-20 md:py-28 bg-muted/40">
+        <AnimatedSection className="mx-auto max-w-4xl space-y-12">
+          <motion.div variants={fadeUp} className="text-center space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              How It Works
+            </h2>
+            <p className="mx-auto max-w-lg text-muted-foreground">
+              Four simple steps to a cleaner neighborhood.
+            </p>
+          </motion.div>
 
-          {/* Features */}
-          <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-            <FeatureCard
-              icon={LayoutTemplate}
-              title="Full boilerplate"
-              text="Landing, auth, test page, API layer, and routing ready from init."
-            />
-            <FeatureCard
-              icon={Zap}
-              title="Modern stack"
-              text="React + TS + Vite, Zustand, React Query, Axios, Tailwind, and more."
-            />
-            <FeatureCard
-              icon={Terminal}
-              title="Backend wired"
-              text="Express server with Mongo via Mongoose plus Prisma ORM, pre‑hooked."
-            />
-          </div>
-        </section>
+          <div className="relative grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            {/* connecting line (desktop) */}
+            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-border" />
 
-        {/* RIGHT – preview card */}
-        <section className="flex-1">
-          <div className="relative mx-auto max-w-md rounded-3xl border bg-card/90 p-4 shadow-[0_22px_60px_-26px_rgba(0,0,0,0.9)] backdrop-blur">
-            {/* window chrome */}
-            <div className="mb-3 flex items-center justify-between text-[10px] text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
-              </div>
-              <span className="rounded-full bg-muted px-2 py-0.5 font-medium">
-                stack-forge • dev
-              </span>
-            </div>
-
-            <div className="space-y-3 rounded-2xl border bg-background/90 p-3">
-              {/* fake UI */}
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-col gap-1">
-                  <div className="h-2.5 w-28 rounded-full bg-gradient-to-r from-primary/90 via-primary/60 to-primary/20" />
-                  <div className="h-2 w-20 rounded-full bg-muted" />
+            {steps.map((s, i) => (
+              <motion.div
+                key={s.num}
+                variants={fadeUp}
+                custom={i}
+                className="relative text-center space-y-3"
+              >
+                <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground text-xl font-bold shadow-md z-10">
+                  {s.num}
                 </div>
-                <div className="h-7 w-20 rounded-full bg-gradient-to-r from-foreground via-foreground/80 to-foreground/50" />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div className="h-14 rounded-xl bg-muted" />
-                <div className="h-14 rounded-xl bg-muted" />
-                <div className="h-14 rounded-xl bg-muted" />
-              </div>
-
-              {/* terminal preview */}
-              <div className="space-y-1 rounded-xl border bg-black/95 p-3 text-[11px] font-mono text-emerald-100">
-                <div className="flex items-center gap-2 text-emerald-400/80">
-                  <Terminal className="h-3 w-3" />
-                  <span>stack-forge ▸ init</span>
-                </div>
-                <p>$ npx stack-installer-cli</p>
-                <p className="text-emerald-400/90">✔ Scaffolding React + TS + Vite app…</p>
-                <p className="text-emerald-400/90">
-                  ✔ Adding Express, Mongoose, Prisma boilerplate…
-                </p>
-                <p className="text-emerald-400/90">
-                  ✔ Wiring Zustand store, React Query, and Axios wrapper…
-                </p>
-                <p className="text-emerald-400/90">✔ Dropping in landing + auth pages…</p>
-                <p className="text-emerald-300/90">Done. Run: npm run dev</p>
-              </div>
-            </div>
+                <h3 className="text-lg font-semibold">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">{s.text}</p>
+              </motion.div>
+            ))}
           </div>
-        </section>
-      </main>
+        </AnimatedSection>
+      </section>
+
+      <section className="px-6 py-20 md:py-28">
+        <AnimatedSection className="mx-auto max-w-5xl space-y-12">
+          <motion.div variants={fadeUp} className="text-center space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Waste Categories
+            </h2>
+            <p className="mx-auto max-w-lg text-muted-foreground">
+              We handle all major types of waste responsibly.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5"
+          >
+            {wasteCategories.map((w, i) => (
+              <motion.div
+                key={w.name}
+                variants={fadeUp}
+                custom={i}
+                whileHover={{ y: -6, boxShadow: "0 12px 28px -8px rgba(0,0,0,0.15)" }}
+                className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-6 cursor-default transition-colors"
+              >
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `${w.color}20` }}
+                >
+                  <w.icon className="h-7 w-7" style={{ color: w.color }} />
+                </div>
+                <span className="text-sm font-semibold">{w.name}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatedSection>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="px-6 py-20 md:py-28 bg-primary/5">
+        <AnimatedSection className="mx-auto max-w-2xl text-center space-y-6">
+          <motion.h2
+            variants={fadeUp}
+            className="text-3xl sm:text-4xl font-bold tracking-tight"
+          >
+            Ready to Make a Difference?
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            custom={1}
+            className="text-muted-foreground text-base sm:text-lg"
+          >
+            Join EcoCollect today and help create a cleaner, greener community.
+          </motion.p>
+          <motion.div variants={fadeUp} custom={2}>
+            <Button asChild size="lg" className="gap-2">
+              <Link to="/register">
+                Get Started <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </motion.div>
+        </AnimatedSection>
+      </section>
+
+      <footer className="px-6 py-10 text-center text-sm text-muted-foreground">
+        © 2026 EcoCollect. Smart Waste, Clean Future.
+      </footer>
     </div>
   );
 };
 
 export default LandingPage;
-
 

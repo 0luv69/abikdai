@@ -11,20 +11,22 @@ const verifyPassword=async(plain,hashed)=>{
     return await bcrypt.compare(plain,hashed);
 }
 
-const CreateAccessToken = (id,email,fullname) => {
+const CreateAccessToken = (id,email,fullname,role="user") => {
     const payload = {
       id: id,
       fullname,
       email,
+      role,
     };
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
   }
   
-  const CreateRefreshToken = (id,email,fullname) => {
+  const CreateRefreshToken = (id,email,fullname,role="user") => {
     const payload = {
       id: id,
       email,
-      fullname
+      fullname,
+      role,
     };
     return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
   }

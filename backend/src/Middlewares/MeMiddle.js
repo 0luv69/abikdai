@@ -1,4 +1,5 @@
 import asyncHandler from "../Utils/AsyncHandler.js";
+import ApiResponse from "../Utils/ApiResponse.js";
 import { CreateAccessToken } from "../Utils/Authutils.js";
 import jwt from "jsonwebtoken";
 
@@ -15,7 +16,14 @@ const Whoareu = asyncHandler(async (req, res) => {
 
   try {
     const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-    return res.json({ success: true, user: decoded });
+    return res.json(
+      new ApiResponse(200, "User found", {
+        id: decoded.id,
+        fullname: decoded.fullname,
+        email: decoded.email,
+        role: decoded.role || "user",
+      })
+    );
   } catch (err) {
     console.log("Access token expired:", err.message);
   }
@@ -26,9 +34,10 @@ const Whoareu = asyncHandler(async (req, res) => {
       id: decodedRefresh.id,
       fullname: decodedRefresh.fullname,
       email: decodedRefresh.email,
+      role: decodedRefresh.role || "user",
     };
 
-    const newAccessToken = CreateAccessToken(user.id,user.email,user.fullname);
+    const newAccessToken = CreateAccessToken(user.id,user.email,user.fullname,user.role);
 
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
@@ -37,7 +46,7 @@ const Whoareu = asyncHandler(async (req, res) => {
       path: "/",
     });
 
-    return res.json({ success: true, user });
+    return res.json(new ApiResponse(200, "User found", user));
   } catch (err) {
     console.log("Refresh token expired:", err.message);
     return res.status(401).json({ message: "Cookies expired or invalid" });

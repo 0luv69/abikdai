@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {LoginUser,RegisterUser,LogoutUser} from "../Controllers/UserController.js"
 import AuthUser from "../Middlewares/AuthMiddelware.js"
+import Whoareu from "../Middlewares/MeMiddle.js"
 const UserRouter=Router()
 
 UserRouter.get("/",(req,res)=>{
@@ -10,6 +11,7 @@ UserRouter.get("/",(req,res)=>{
 UserRouter.post("/register",RegisterUser)
 UserRouter.post("/login",LoginUser)
 UserRouter.get("/logout",AuthUser,LogoutUser)
+UserRouter.get("/me",Whoareu)
 
 
 export default UserRouter

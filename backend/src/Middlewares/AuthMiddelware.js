@@ -32,9 +32,10 @@ const AuthUser = asyncHandler(async (req, res, next) => {
       id: decodedRefresh.id,
       fullname: decodedRefresh.fullname,
       email: decodedRefresh.email,
+      role: decodedRefresh.role || "user",
     };
 
-    const newAccessToken = CreateAccessToken(user.id,user.email,user.fullname);
+    const newAccessToken = CreateAccessToken(user.id,user.email,user.fullname,user.role);
 
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
