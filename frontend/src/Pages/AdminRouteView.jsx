@@ -17,15 +17,25 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/Utils/AxiosWrapper.js";
 import toast from "react-hot-toast";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  useMapEvents,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
 
 const wasteColors = {
@@ -56,7 +66,9 @@ function createAdminIcon() {
 }
 
 function createPickupIcon(index, color, isNext) {
-  const ring = isNext ? "box-shadow: 0 0 0 4px rgba(22,163,74,0.4), 0 2px 8px rgba(0,0,0,0.3);" : "box-shadow: 0 2px 8px rgba(0,0,0,0.3);";
+  const ring = isNext
+    ? "box-shadow: 0 0 0 4px rgba(22,163,74,0.4), 0 2px 8px rgba(0,0,0,0.3);"
+    : "box-shadow: 0 2px 8px rgba(0,0,0,0.3);";
   return L.divIcon({
     className: "custom-marker",
     html: `<div style="
@@ -136,15 +148,23 @@ const AdminRouteView = () => {
 
   const center = useMemo(() => {
     if (adminPos) return [adminPos[1], adminPos[0]];
-    if (pickups.length === 0) return [27.7172, 85.3240];
-    const avgLat = pickups.reduce((s, p) => s + p.location.coordinates[1], 0) / pickups.length;
-    const avgLng = pickups.reduce((s, p) => s + p.location.coordinates[0], 0) / pickups.length;
+    if (pickups.length === 0) return [27.7172, 85.324];
+    const avgLat =
+      pickups.reduce((s, p) => s + p.location.coordinates[1], 0) /
+      pickups.length;
+    const avgLng =
+      pickups.reduce((s, p) => s + p.location.coordinates[0], 0) /
+      pickups.length;
     return [avgLat, avgLng];
   }, [pickups, adminPos]);
 
   // Save admin location to DB
   const saveLocationMutation = useMutation({
-    mutationFn: (coords) => api.patch("/admin/location", { longitude: coords[0], latitude: coords[1] }),
+    mutationFn: (coords) =>
+      api.patch("/admin/location", {
+        longitude: coords[0],
+        latitude: coords[1],
+      }),
     onSuccess: () => {
       toast.success("Location saved");
       queryClient.invalidateQueries({ queryKey: ["adminLocation"] });
@@ -164,7 +184,10 @@ const AdminRouteView = () => {
 
       if (data.route?.routes?.[0]) {
         const route = data.route.routes[0];
-        const coords = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+        const coords = route.geometry.coordinates.map(([lng, lat]) => [
+          lat,
+          lng,
+        ]);
         setRouteGeoJSON(coords);
         setRouteInfo({
           distance: (route.distance / 1000).toFixed(1),
@@ -193,7 +216,10 @@ const AdminRouteView = () => {
         coordinates: [from, to],
       });
       if (data?.routes?.[0]) {
-        const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+        const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [
+          lat,
+          lng,
+        ]);
         setSegmentRoute(coords);
       }
     } catch {
@@ -224,11 +250,17 @@ const AdminRouteView = () => {
         const nextPickup = orderedPickups[nextIdx];
         // Assign next pickup to this admin
         try {
-          await api.patch(`/admin/pickups/${nextPickup._id}`, { status: "assigned" });
-        } catch { /* non-critical */ }
+          await api.patch(`/admin/pickups/${nextPickup._id}`, {
+            status: "assigned",
+          });
+        } catch {
+          /* non-critical */
+        }
 
         calculateSegment(newPos, nextPickup.location.coordinates);
-        toast.success(`Picked up! Next: Stop #${nextIdx + 1} (${nextPickup.wasteType})`);
+        toast.success(
+          `Picked up! Next: Stop #${nextIdx + 1} (${nextPickup.wasteType})`,
+        );
       } else {
         setSegmentRoute(null);
         setRouteActive(false);
@@ -278,8 +310,11 @@ const AdminRouteView = () => {
   const currentTarget = routeActive && orderedPickups[currentStopIndex];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+    <div className="w-full px-6 md:px-12 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
@@ -314,13 +349,22 @@ const AdminRouteView = () => {
               {settingLocation ? "Cancel" : "Set My Location"}
             </Button>
             {routeActive ? (
-              <Button variant="outline" size="sm" onClick={handleReset} className="gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="gap-1"
+              >
                 <RotateCcw className="h-4 w-4" /> Reset
               </Button>
             ) : (
               <Button
                 onClick={handleStartRoute}
-                disabled={optimizeMutation.isPending || !adminPos || pickups.length === 0}
+                disabled={
+                  optimizeMutation.isPending ||
+                  !adminPos ||
+                  pickups.length === 0
+                }
                 className="gap-2"
               >
                 {optimizeMutation.isPending ? (
@@ -347,25 +391,37 @@ const AdminRouteView = () => {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <Navigation className="h-5 w-5 text-primary animate-pulse" />
-                      <span className="text-sm font-medium text-primary">Next Stop</span>
+                      <span className="text-sm font-medium text-primary">
+                        Next Stop
+                      </span>
                     </div>
                     <div
                       className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                      style={{ backgroundColor: wasteColors[currentTarget.wasteType] || "#78909C" }}
+                      style={{
+                        backgroundColor:
+                          wasteColors[currentTarget.wasteType] || "#78909C",
+                      }}
                     >
                       {currentStopIndex + 1}
                     </div>
                     <div>
-                      <p className="font-semibold">{currentTarget.userId?.fullname}</p>
+                      <p className="font-semibold">
+                        {currentTarget.userId?.fullname}
+                      </p>
                       <p className="text-sm text-muted-foreground capitalize">
                         {currentTarget.wasteType} waste
-                        {currentTarget.distanceFromPrev && ` • ${currentTarget.distanceFromPrev} km away`}
+                        {currentTarget.distanceFromPrev &&
+                          ` • ${currentTarget.distanceFromPrev} km away`}
                       </p>
                       {currentTarget.phone && (
-                        <p className="text-xs text-muted-foreground">📞 {currentTarget.phone}</p>
+                        <p className="text-xs text-muted-foreground">
+                          📞 {currentTarget.phone}
+                        </p>
                       )}
                       {currentTarget.address && (
-                        <p className="text-xs text-muted-foreground">📍 {currentTarget.address}</p>
+                        <p className="text-xs text-muted-foreground">
+                          📍 {currentTarget.address}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -419,46 +475,71 @@ const AdminRouteView = () => {
 
                   {/* Admin position marker */}
                   {adminPos && (
-                    <Marker position={[adminPos[1], adminPos[0]]} icon={createAdminIcon()}>
+                    <Marker
+                      position={[adminPos[1], adminPos[0]]}
+                      icon={createAdminIcon()}
+                    >
                       <Popup>
-                        <div className="text-sm font-semibold">🚛 Your Location (Collection Vehicle)</div>
+                        <div className="text-sm font-semibold">
+                          🚛 Your Location (Collection Vehicle)
+                        </div>
                       </Popup>
                     </Marker>
                   )}
 
                   {/* Pickup markers */}
-                  {(routeActive ? orderedPickups : pickups).map((pickup, index) => {
-                    const [lng, lat] = pickup.location.coordinates;
-                    const color = wasteColors[pickup.wasteType] || "#78909C";
-                    const isCompleted = completedIds.has(pickup._id);
-                    const isNext = routeActive && index === currentStopIndex;
+                  {(routeActive ? orderedPickups : pickups).map(
+                    (pickup, index) => {
+                      const [lng, lat] = pickup.location.coordinates;
+                      const color = wasteColors[pickup.wasteType] || "#78909C";
+                      const isCompleted = completedIds.has(pickup._id);
+                      const isNext = routeActive && index === currentStopIndex;
 
-                    return (
-                      <Marker
-                        key={pickup._id}
-                        position={[lat, lng]}
-                        icon={
-                          isCompleted
-                            ? createCompletedIcon(index)
-                            : createPickupIcon(index, color, isNext)
-                        }
-                      >
-                        <Popup>
-                          <div className="text-sm space-y-1">
-                            <p className="font-bold">Stop #{index + 1}</p>
-                            <p className="font-medium">{pickup.userId?.fullname}</p>
-                            <p className="capitalize">{pickup.wasteType} waste</p>
-                            {pickup.distanceFromPrev && (
-                              <p className="text-gray-500">{pickup.distanceFromPrev} km from prev</p>
-                            )}
-                            {pickup.address && <p className="text-gray-500">{pickup.address}</p>}
-                            {pickup.phone && <p className="text-gray-500">📞 {pickup.phone}</p>}
-                            {isCompleted && <p className="text-green-600 font-medium">✓ Picked up</p>}
-                          </div>
-                        </Popup>
-                      </Marker>
-                    );
-                  })}
+                      return (
+                        <Marker
+                          key={pickup._id}
+                          position={[lat, lng]}
+                          icon={
+                            isCompleted
+                              ? createCompletedIcon(index)
+                              : createPickupIcon(index, color, isNext)
+                          }
+                        >
+                          <Popup>
+                            <div className="text-sm space-y-1">
+                              <p className="font-bold">Stop #{index + 1}</p>
+                              <p className="font-medium">
+                                {pickup.userId?.fullname}
+                              </p>
+                              <p className="capitalize">
+                                {pickup.wasteType} waste
+                              </p>
+                              {pickup.distanceFromPrev && (
+                                <p className="text-gray-500">
+                                  {pickup.distanceFromPrev} km from prev
+                                </p>
+                              )}
+                              {pickup.address && (
+                                <p className="text-gray-500">
+                                  {pickup.address}
+                                </p>
+                              )}
+                              {pickup.phone && (
+                                <p className="text-gray-500">
+                                  📞 {pickup.phone}
+                                </p>
+                              )}
+                              {isCompleted && (
+                                <p className="text-green-600 font-medium">
+                                  ✓ Picked up
+                                </p>
+                              )}
+                            </div>
+                          </Popup>
+                        </Marker>
+                      );
+                    },
+                  )}
 
                   {/* Full route line (faded) */}
                   {routeGeoJSON && (
@@ -505,8 +586,8 @@ const AdminRouteView = () => {
                       isCompleted
                         ? "opacity-50"
                         : isCurrent
-                        ? "ring-2 ring-primary shadow-md"
-                        : "hover:shadow-md"
+                          ? "ring-2 ring-primary shadow-md"
+                          : "hover:shadow-md"
                     }`}
                   >
                     <CardContent className="py-3">
@@ -518,24 +599,33 @@ const AdminRouteView = () => {
                           style={
                             isCompleted
                               ? {}
-                              : { backgroundColor: wasteColors[pickup.wasteType] || "#78909C" }
+                              : {
+                                  backgroundColor:
+                                    wasteColors[pickup.wasteType] || "#78909C",
+                                }
                           }
                         >
                           {isCompleted ? "✓" : index + 1}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className={`font-medium truncate ${isCompleted ? "line-through" : ""}`}>
+                          <p
+                            className={`font-medium truncate ${isCompleted ? "line-through" : ""}`}
+                          >
                             {pickup.userId?.fullname}
                           </p>
                           <p className="text-xs text-muted-foreground capitalize">
                             {pickup.wasteType} • {pickup.distanceFromPrev} km
                           </p>
                           {pickup.address && (
-                            <p className="text-xs text-muted-foreground truncate">{pickup.address}</p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {pickup.address}
+                            </p>
                           )}
                         </div>
                         {isCurrent && (
-                          <Badge className="bg-primary text-primary-foreground shrink-0">Next</Badge>
+                          <Badge className="bg-primary text-primary-foreground shrink-0">
+                            Next
+                          </Badge>
                         )}
                       </div>
                     </CardContent>

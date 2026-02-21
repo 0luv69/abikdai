@@ -12,9 +12,12 @@ import "leaflet/dist/leaflet.css";
 // Fix leaflet default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
 
 const wasteMarkerColors = {
@@ -52,28 +55,40 @@ const MapPage = () => {
   const pickups = data?.pickups || [];
 
   const center = useMemo(() => {
-    if (pickups.length === 0) return [27.7172, 85.3240];
-    const avgLat = pickups.reduce((s, p) => s + p.location.coordinates[1], 0) / pickups.length;
-    const avgLng = pickups.reduce((s, p) => s + p.location.coordinates[0], 0) / pickups.length;
+    if (pickups.length === 0) return [27.7172, 85.324];
+    const avgLat =
+      pickups.reduce((s, p) => s + p.location.coordinates[1], 0) /
+      pickups.length;
+    const avgLng =
+      pickups.reduce((s, p) => s + p.location.coordinates[0], 0) /
+      pickups.length;
     return [avgLat, avgLng];
   }, [pickups]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+    <div className="w-full px-6 md:px-12 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <MapPin className="h-7 w-7 text-primary" />
             Pickup Map
           </h1>
-          <p className="text-muted-foreground mt-1">View all your pickup locations</p>
+          <p className="text-muted-foreground mt-1">
+            View all your pickup locations
+          </p>
         </div>
 
         {/* Legend */}
         <div className="flex flex-wrap gap-3 mb-4">
           {Object.entries(wasteMarkerColors).map(([type, color]) => (
             <Badge key={type} variant="outline" className="gap-1.5 capitalize">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: color }}
+              />
               {type}
             </Badge>
           ))}
@@ -99,7 +114,8 @@ const MapPage = () => {
                   />
                   {pickups.map((pickup) => {
                     const [lng, lat] = pickup.location.coordinates;
-                    const color = wasteMarkerColors[pickup.wasteType] || "#78909C";
+                    const color =
+                      wasteMarkerColors[pickup.wasteType] || "#78909C";
                     return (
                       <Marker
                         key={pickup._id}
@@ -108,12 +124,20 @@ const MapPage = () => {
                       >
                         <Popup>
                           <div className="text-sm space-y-1">
-                            <p className="font-semibold capitalize">{pickup.wasteType} Waste</p>
-                            <p className="text-gray-600">
-                              {new Date(pickup.scheduledDate).toLocaleDateString()}
+                            <p className="font-semibold capitalize">
+                              {pickup.wasteType} Waste
                             </p>
-                            <p className="capitalize text-gray-500">Status: {pickup.status.replace("_", " ")}</p>
-                            {pickup.address && <p className="text-gray-500">{pickup.address}</p>}
+                            <p className="text-gray-600">
+                              {new Date(
+                                pickup.scheduledDate,
+                              ).toLocaleDateString()}
+                            </p>
+                            <p className="capitalize text-gray-500">
+                              Status: {pickup.status.replace("_", " ")}
+                            </p>
+                            {pickup.address && (
+                              <p className="text-gray-500">{pickup.address}</p>
+                            )}
                           </div>
                         </Popup>
                       </Marker>
