@@ -264,7 +264,7 @@ const AdminRouteView = () => {
       } else {
         setSegmentRoute(null);
         setRouteActive(false);
-        toast.success("All pickups completed! 🎉");
+        toast.success("All pickups completed! ");
       }
 
       queryClient.invalidateQueries({ queryKey: ["adminTodayPickups"] });
@@ -420,7 +420,7 @@ const AdminRouteView = () => {
                       )}
                       {currentTarget.address && (
                         <p className="text-xs text-muted-foreground">
-                          📍 {currentTarget.address}
+                          {currentTarget.address}
                         </p>
                       )}
                     </div>
@@ -444,8 +444,8 @@ const AdminRouteView = () => {
         )}
 
         {settingLocation && (
-          <div className="mb-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200">
-            📍 Click on the map to set your current location
+          <div className="mb-3 p-3 rounded-lg bg-blue-100 text-blue-800 border border-blue-200">
+            Click on the map to set your current location
           </div>
         )}
 
@@ -481,7 +481,7 @@ const AdminRouteView = () => {
                     >
                       <Popup>
                         <div className="text-sm font-semibold">
-                          🚛 Your Location (Collection Vehicle)
+                          Your Location (Collection Vehicle)
                         </div>
                       </Popup>
                     </Marker>
@@ -582,27 +582,25 @@ const AdminRouteView = () => {
                 return (
                   <Card
                     key={pickup._id}
-                    className={`transition-all ${
-                      isCompleted
-                        ? "opacity-50"
-                        : isCurrent
-                          ? "ring-2 ring-primary shadow-md"
-                          : "hover:shadow-md"
-                    }`}
+                    className={`transition-all ${isCompleted
+                      ? "opacity-50"
+                      : isCurrent
+                        ? "ring-2 ring-primary shadow-md"
+                        : "hover:shadow-md"
+                      }`}
                   >
                     <CardContent className="py-3">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 ${
-                            isCompleted ? "bg-gray-400" : ""
-                          }`}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 ${isCompleted ? "bg-gray-400" : ""
+                            }`}
                           style={
                             isCompleted
                               ? {}
                               : {
-                                  backgroundColor:
-                                    wasteColors[pickup.wasteType] || "#78909C",
-                                }
+                                backgroundColor:
+                                  wasteColors[pickup.wasteType] || "#78909C",
+                              }
                           }
                         >
                           {isCompleted ? "✓" : index + 1}

@@ -147,6 +147,7 @@ const SchedulePickup = () => {
       toast.success("Pickup scheduled successfully!");
       queryClient.invalidateQueries({ queryKey: ["userPickups"] });
       setStep(1);
+      navigate("/dashboard");
       setSelectedWaste("");
       setScheduledDate(null);
       setAddress("");
@@ -193,21 +194,21 @@ const SchedulePickup = () => {
   const selectedWasteType = wasteTypes.find((t) => t.id === selectedWaste);
 
   return (
-    <div className="w-full px-6 md:px-12 py-8">
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-12 py-18">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-4xl font-bold tracking-tight">
             Schedule a Pickup
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-3">
             Choose your waste type, date, and location
           </p>
           {/* Step Indicator */}
-          <div className="flex items-center gap-3 mt-4">
+          <div className="flex items-center gap-3 mt-8">
             <div
               className={cn(
                 "flex items-center gap-2 text-sm font-medium",
@@ -283,10 +284,10 @@ const SchedulePickup = () => {
                               <CalendarIcon className="mr-2 h-4 w-4" />
                               {scheduledDate
                                 ? scheduledDate.toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  })
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })
                                 : "Select a date"}
                             </Button>
                           </PopoverTrigger>

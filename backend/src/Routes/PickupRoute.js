@@ -7,7 +7,7 @@ import {
   updatePickupStatus,
   deletePickup,
 } from "../Controllers/PickupController.js";
-
+import AdminMiddleware from "../Middlewares/AdminMiddleware.js";
 const PickupRouter = Router();
 
 PickupRouter.use(AuthUser);
@@ -15,7 +15,7 @@ PickupRouter.use(AuthUser);
 PickupRouter.post("/", createPickup);
 PickupRouter.get("/", getUserPickups);
 PickupRouter.get("/:id", getPickupById);
-PickupRouter.patch("/:id/status", updatePickupStatus);
-PickupRouter.delete("/:id", deletePickup);
+PickupRouter.patch("/:id/status", AdminMiddleware, updatePickupStatus);
+PickupRouter.delete("/:id", AdminMiddleware, deletePickup);
 
 export default PickupRouter;
